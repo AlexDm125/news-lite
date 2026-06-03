@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+/* Editor.js double placeholder fix */
+.codex-editor--empty .codex-editor__placeholder {
+  display: none !important;
+}
+.codex-editor--empty .ce-paragraph[data-placeholder]::before {
+  content: attr(data-placeholder);
+  color: #9ca3af !important;
+  font-weight: normal !important;
+}
+.codex-editor--empty .ce-block .ce-paragraph[data-placeholder]:empty::before {
+  display: none !important;
+}

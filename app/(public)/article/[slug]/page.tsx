@@ -1,3 +1,4 @@
+import React, { type JSX } from "react";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { auth } from "@/auth";
@@ -41,6 +42,24 @@ export default async function ArticlePage({
     .join("")
     .toUpperCase();
 
+  const renderHeaderTag = (level: number, text: string, idx: number) => {
+    const className = "font-bold text-gray-900 mb-4 mt-8";
+    switch (level) {
+      case 1:
+        return <h1 key={idx} className={className}>{text}</h1>;
+      case 3:
+        return <h3 key={idx} className={className}>{text}</h3>;
+      case 4:
+        return <h4 key={idx} className={className}>{text}</h4>;
+      case 5:
+        return <h5 key={idx} className={className}>{text}</h5>;
+      case 6:
+        return <h6 key={idx} className={className}>{text}</h6>;
+      default:
+        return <h2 key={idx} className={className}>{text}</h2>;
+    }
+  };
+
   const renderContent = (content: any) => {
     if (!content || !content.blocks || !Array.isArray(content.blocks)) return null;
     
@@ -64,12 +83,7 @@ export default async function ArticlePage({
             break;
           case "header":
             const level = block.data?.level || 2;
-            const Tag = `h${level}` as keyof JSX.IntrinsicElements;
-            element = (
-              <Tag key={idx} className="font-bold text-gray-900 mb-4 mt-8">
-                {block.data?.text || ""}
-              </Tag>
-            );
+            element = renderHeaderTag(level, block.data?.text || "", idx);
             break;
           case "list":
           case "nestedlist":

@@ -4,9 +4,11 @@ import { registerAction } from "@/app/actions/auth";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export function RegisterForm() {
   const router = useRouter();
+  const { update: updateSession } = useSession();
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [isLoading, setIsLoading] = useState(false);
 
@@ -24,8 +26,13 @@ export function RegisterForm() {
       return;
     }
 
-    router.push("/");
-    router.refresh();
+    // Оновити сесію після реєстрації
+    await updateSession();
+
+    setTimeout(() => {
+      router.refresh();
+      router.push("/");
+    }, 100);
   }
 
   return (

@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { updateUserProfile } from "@/app/actions/auth";
 
 interface ProfileEditFormProps {
@@ -15,6 +16,7 @@ interface ProfileEditFormProps {
 }
 
 export default function ProfileEditForm({ user }: ProfileEditFormProps) {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -66,13 +68,7 @@ export default function ProfileEditForm({ user }: ProfileEditFormProps) {
         throw new Error(response.error);
       }
 
-      setSuccess(true);
-      setFormData((prev) => ({
-        ...prev,
-        oldPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      }));
+      router.push("/profile");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Помилка при оновленні профілю");
     } finally {

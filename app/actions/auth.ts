@@ -1,6 +1,6 @@
 "use server";
 
-import { signOut, auth } from "@/auth";
+import { signOut, signIn, auth } from "@/auth";
 import prisma from "@/lib/prisma";
 import { registerSchema } from "@/lib/validations";
 import * as bcrypt from "bcryptjs";
@@ -76,9 +76,19 @@ export async function registerAction(formData: FormData) {
       },
     });
 
+    // Автоматичний логін після реєстрації
+    await signIn("credentials", {
+      email: validatedData.data.email,
+      password: validatedData.data.password,
+      redirect: false,
+    });
+
+    revalidatePath("/");
+
     return {
       success: true,
       message: "Реєстрація успішна!",
+      autoLogin: true,
     };
   } catch (error) {
     return {
@@ -94,6 +104,7 @@ export async function logoutAction() {
   const protocol = headersList.get("x-forwarded-proto") || "http";
   const baseUrl = `${protocol}://${host}`;
   
+  revalidatePath("/");
   await signOut({ redirectTo: baseUrl });
 }
 

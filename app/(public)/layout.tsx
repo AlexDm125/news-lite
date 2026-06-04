@@ -5,12 +5,12 @@ import type { ReactNode } from "react";
 
 export default function PublicLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Header 
         title="News Lite" 
         rightContent={<HeaderButtons />}
       />
-      <main>{children}</main>
+      <main className="flex-1">{children}</main>
       <Footer />
     </div>
   );

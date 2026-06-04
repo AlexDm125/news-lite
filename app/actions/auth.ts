@@ -6,6 +6,7 @@ import { registerSchema } from "@/lib/validations";
 import * as bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 
 async function checkAdmin() {
   const session = await auth();
@@ -88,7 +89,12 @@ export async function registerAction(formData: FormData) {
 }
 
 export async function logoutAction() {
-  await signOut();
+  const headersList = await headers();
+  const host = headersList.get("host") || "localhost:3000";
+  const protocol = headersList.get("x-forwarded-proto") || "http";
+  const baseUrl = `${protocol}://${host}`;
+  
+  await signOut({ redirectTo: baseUrl });
 }
 
 export async function blockUserAction(userId: string) {

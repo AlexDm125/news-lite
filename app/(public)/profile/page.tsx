@@ -166,46 +166,70 @@ export default async function ProfilePage({
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex justify-between items-center mt-8">
+                <div className="flex flex-col items-center gap-4 mt-8">
                   <p className="text-sm text-gray-700">Показано <span className="font-medium">{startItem}</span> до <span className="font-medium">{endItem}</span> з <span className="font-medium">{totalCount}</span> результатів</p>
-                  <div className="flex space-x-2">
-                    {page > 1 && (
-                      <Link
-                        href={`?page=${page - 1}`}
-                        className="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50"
-                      >
-                        Попередня
-                      </Link>
-                    )}
-                    {page <= 1 && (
-                      <button className="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 opacity-50 cursor-not-allowed" disabled>Попередня</button>
-                    )}
+                  <div className="flex justify-center items-center gap-2 sm:gap-4">
+                    {/* Mobile: компактна версія */}
+                    <div className="flex sm:hidden gap-2">
+                      {page > 1 && (
+                        <Link
+                          href={`?page=${page - 1}`}
+                          className="px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 text-sm"
+                        >
+                          ← Попередня
+                        </Link>
+                      )}
+                      <span className="px-3 py-2 text-sm text-gray-700">{page} / {totalPages}</span>
+                      {page < totalPages && (
+                        <Link
+                          href={`?page=${page + 1}`}
+                          className="px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 text-sm"
+                        >
+                          Наступна →
+                        </Link>
+                      )}
+                    </div>
 
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                      <Link
-                        key={p}
-                        href={`?page=${p}`}
-                        className={`px-4 py-2 rounded-lg ${
-                          p === page
-                            ? "bg-blue-600 text-white"
-                            : "border border-gray-300 text-gray-600 hover:bg-gray-50"
-                        }`}
-                      >
-                        {p}
-                      </Link>
-                    ))}
+                    {/* Desktop: повна пагінація */}
+                    <div className="hidden sm:flex justify-center items-center gap-2">
+                      {page > 1 && (
+                        <Link
+                          href={`?page=${page - 1}`}
+                          className="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50"
+                        >
+                          ← Попередня
+                        </Link>
+                      )}
+                      {page <= 1 && (
+                        <button className="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 opacity-50 cursor-not-allowed" disabled>← Попередня</button>
+                      )}
 
-                    {page < totalPages && (
-                      <Link
-                        href={`?page=${page + 1}`}
-                        className="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50"
-                      >
-                        Наступна
-                      </Link>
-                    )}
-                    {page >= totalPages && (
-                      <button className="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 opacity-50 cursor-not-allowed" disabled>Наступна</button>
-                    )}
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                        <Link
+                          key={p}
+                          href={`?page=${p}`}
+                          className={`px-4 py-2 rounded-lg ${
+                            p === page
+                              ? "bg-blue-600 text-white"
+                              : "border border-gray-300 text-gray-600 hover:bg-gray-50"
+                          }`}
+                        >
+                          {p}
+                        </Link>
+                      ))}
+
+                      {page < totalPages && (
+                        <Link
+                          href={`?page=${page + 1}`}
+                          className="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50"
+                        >
+                          Наступна →
+                        </Link>
+                      )}
+                      {page >= totalPages && (
+                        <button className="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 opacity-50 cursor-not-allowed" disabled>Наступна →</button>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}

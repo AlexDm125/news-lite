@@ -76,7 +76,7 @@ export default async function ArticlePage({
         switch (block.type) {
           case "paragraph":
             element = (
-              <p key={idx} className="text-gray-700 leading-relaxed mb-6">
+              <p key={idx} className="text-base sm:text-lg text-gray-700 leading-relaxed mb-6">
                 {block.data?.text || ""}
               </p>
             );
@@ -106,11 +106,11 @@ export default async function ArticlePage({
             const imageUrl = block.data?.file?.url;
             if (imageUrl) {
               element = (
-                <figure key={idx} className="my-8">
+                <figure key={idx} className="my-1">
                   <img
                     src={imageUrl}
                     alt={block.data?.caption || "Article image"}
-                    className="w-full h-96 object-cover rounded-lg"
+                    className="w-full aspect-video object-cover rounded-lg"
                   />
                   {block.data?.caption && (
                     <figcaption className="text-center text-sm text-gray-500 mt-2">
@@ -201,14 +201,14 @@ export default async function ArticlePage({
   };
 
   return (
-    <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <Link href="/" className="text-blue-600 hover:text-blue-700 mb-6 inline-block">
         ← Повернутися до новин
       </Link>
       
       <article className="bg-white rounded-lg shadow-md overflow-hidden">
         {/* Article Header */}
-        <div className="p-8">
+        <div className="px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 lg:pt-8">
           <div className="flex items-center space-x-2 mb-4">
             <span className="text-xs font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
               {news.category.name}
@@ -217,8 +217,8 @@ export default async function ArticlePage({
               {news.publishedAt ? new Date(news.publishedAt).toLocaleDateString("uk-UA", { year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" }) : ""}
             </span>
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">{news.title}</h1>
-          <div className="flex items-center space-x-3 mb-6">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">{news.title}</h1>
+          <div className="flex items-center space-x-3 mb-0">
             <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
               {authorInitials}
             </div>
@@ -231,7 +231,7 @@ export default async function ArticlePage({
 
 
         {/* Article Body */}
-        <div className="p-8 pt-4">
+        <div className="p-4 sm:p-6 lg:p-8 pt-4">
           <div className="prose max-w-none">
             {renderContent(news.content)}
           </div>
@@ -239,7 +239,7 @@ export default async function ArticlePage({
       </article>
 
       {/* Comments Section */}
-      <div className="bg-white rounded-lg shadow-md mt-8 p-8">
+      <div className="bg-white rounded-lg shadow-md mt-8 p-4 sm:p-6 lg:p-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">
           Коментарі ({news.comments.length})
         </h2>

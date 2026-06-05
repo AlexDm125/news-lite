@@ -83,7 +83,7 @@ export default async function HomePage({
                 <img
                   src={article.coverImage}
                   alt={article.title}
-                  className="w-full h-48 object-cover"
+                  className="w-full aspect-video object-cover"
                 />
               )}
               <div className="p-6">
@@ -123,42 +123,66 @@ export default async function HomePage({
       {totalPages > 1 && (
         <div className="flex flex-col items-center gap-4 mt-8">
           <p className="text-sm text-gray-700">Показано <span className="font-medium">{startItem}</span> до <span className="font-medium">{endItem}</span> з <span className="font-medium">{totalCount}</span> результатів</p>
-          <div className="flex justify-center items-center space-x-2">
-            {currentPage > 1 && (
-              <Link
-                href={buildUrl(currentPage - 1)}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50"
-              >
-                ← Попередня
-              </Link>
-            )}
-
-            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-              const pageNum = currentPage <= 3 ? i + 1 : currentPage - 2 + i;
-              if (pageNum > totalPages) return null;
-              return (
+          <div className="flex justify-center items-center gap-2 sm:gap-4">
+            {/* Mobile: кнопки з текстом компактніше */}
+            <div className="flex sm:hidden gap-2">
+              {currentPage > 1 && (
                 <Link
-                  key={pageNum}
-                  href={buildUrl(pageNum)}
-                  className={`px-4 py-2 rounded-lg ${
-                    pageNum === currentPage
-                      ? "bg-blue-600 text-white"
-                      : "border border-gray-300 text-gray-600 hover:bg-gray-50"
-                  }`}
+                  href={buildUrl(currentPage - 1)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 text-sm"
                 >
-                  {pageNum}
+                  ← Попередня
                 </Link>
-              );
-            })}
+              )}
+              <span className="px-3 py-2 text-sm text-gray-700">{currentPage} / {totalPages}</span>
+              {currentPage < totalPages && (
+                <Link
+                  href={buildUrl(currentPage + 1)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 text-sm"
+                >
+                  Наступна →
+                </Link>
+              )}
+            </div>
 
-            {currentPage < totalPages && (
-              <Link
-                href={buildUrl(currentPage + 1)}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50"
-              >
-                Наступна →
-              </Link>
-            )}
+            {/* Desktop: числа + стрілки */}
+            <div className="hidden sm:flex justify-center items-center gap-2">
+              {currentPage > 1 && (
+                <Link
+                  href={buildUrl(currentPage - 1)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50"
+                >
+                  ← Попередня
+                </Link>
+              )}
+
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                const pageNum = currentPage <= 3 ? i + 1 : currentPage - 2 + i;
+                if (pageNum > totalPages) return null;
+                return (
+                  <Link
+                    key={pageNum}
+                    href={buildUrl(pageNum)}
+                    className={`px-4 py-2 rounded-lg ${
+                      pageNum === currentPage
+                        ? "bg-blue-600 text-white"
+                        : "border border-gray-300 text-gray-600 hover:bg-gray-50"
+                    }`}
+                  >
+                    {pageNum}
+                  </Link>
+                );
+              })}
+
+              {currentPage < totalPages && (
+                <Link
+                  href={buildUrl(currentPage + 1)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50"
+                >
+                  Наступна →
+                </Link>
+              )}
+            </div>
           </div>
         </div>
       )}

@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSession } from "next-auth/react";
-import { logoutAction } from "@/app/actions/auth";
+import { useSession, signOut } from "next-auth/react";
 
 export function UserMenu() {
   const { data: session } = useSession();
@@ -16,14 +15,12 @@ export function UserMenu() {
       <Link href="/profile" className="text-gray-600 hover:text-gray-900 font-medium text-sm">
         {session.user.name || session.user.email}
       </Link>
-      <form action={logoutAction}>
-        <button
-          type="submit"
-          className="text-gray-600 hover:text-gray-900 text-sm bg-transparent border-none p-0 cursor-pointer"
-        >
-          Вийти
-        </button>
-      </form>
+      <button
+        onClick={() => signOut({ callbackUrl: "/" })}
+        className="text-gray-600 hover:text-gray-900 text-sm bg-transparent border-none p-0 cursor-pointer"
+      >
+        Вийти
+      </button>
     </div>
   );
 }

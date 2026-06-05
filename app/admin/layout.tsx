@@ -1,8 +1,8 @@
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import type { ReactNode } from "react";
-import { logoutAction } from "@/app/actions/auth";
 import { auth } from "@/auth";
+import AdminLogoutButton from "../../components/AdminLogoutButton";
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const session = await auth();
@@ -23,9 +23,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             ) : (
               <span className="text-gray-700 font-medium text-sm">{userName}</span>
             )}
-            <form action={logoutAction}>
-              <button type="submit" className="text-gray-500 hover:text-gray-900 text-sm font-medium transition-colors cursor-pointer bg-transparent border-none p-0">Вийти</button>
-            </form>
+            <AdminLogoutButton />
           </div>
         }
       />

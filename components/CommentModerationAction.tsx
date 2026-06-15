@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { updateCommentStatusAction, deleteCommentAction } from "@/app/actions/auth";
+import ConfirmDialog from "./ConfirmDialog";
+import ErrorDialog from "./ErrorDialog";
 
 interface CommentModerationActionProps {
   commentId: string;
@@ -13,37 +15,51 @@ export default function CommentModerationAction({
   currentStatus,
 }: CommentModerationActionProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
 
   const handleStatusChange = async (newStatus: "ACTIVE" | "HIDDEN" | "PENDING") => {
     if (isLoading) return;
     
     setIsLoading(true);
-    try {
-      await updateCommentStatusAction(commentId, newStatus);
-      window.location.reload();
-    } catch (error) {
-      console.error("Error updating comment status:", error);
+    const result = await updateCommentStatusAction(commentId, newStatus);
+    if (result.error) {
+      setError(result.error);
       setIsLoading(false);
+    } else {
+      window.location.reload();
     }
   };
 
   const handleDelete = async () => {
-    if (!confirm("Ви впевнені, що хочете видалити цей коментар?")) {
-      return;
-    }
-
     setIsLoading(true);
-    try {
-      await deleteCommentAction(commentId);
-      window.location.reload();
-    } catch (error) {
-      console.error("Error deleting comment:", error);
+    const result = await deleteCommentAction(commentId);
+    if (result.error) {
+      setError(result.error);
+      setDeleteConfirm(false);
       setIsLoading(false);
+    } else {
+      window.location.reload();
     }
   };
 
   return (
     <>
+      <ErrorDialog
+        isOpen={!!error}
+        title="Помилка"
+        message={error || ""}
+        onClose={() => setError(null)}
+      />
+      <ConfirmDialog
+        isOpen={deleteConfirm}
+        title="Видалити коментар?"
+        message="Ця дія необоротна. Коментар буде видалено навічно."
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteConfirm(false)}
+        isLoading={isLoading}
+      />
+
       {currentStatus === "ACTIVE" && (
         <>
           <button
@@ -54,7 +70,7 @@ export default function CommentModerationAction({
             Приховати
           </button>
           <button
-            onClick={handleDelete}
+            onClick={() => setDeleteConfirm(true)}
             disabled={isLoading}
             className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm disabled:opacity-50"
           >
@@ -79,7 +95,7 @@ export default function CommentModerationAction({
             Відхилити
           </button>
           <button
-            onClick={handleDelete}
+            onClick={() => setDeleteConfirm(true)}
             disabled={isLoading}
             className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm disabled:opacity-50"
           >
@@ -97,7 +113,7 @@ export default function CommentModerationAction({
             Показати
           </button>
           <button
-            onClick={handleDelete}
+            onClick={() => setDeleteConfirm(true)}
             disabled={isLoading}
             className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm disabled:opacity-50"
           >

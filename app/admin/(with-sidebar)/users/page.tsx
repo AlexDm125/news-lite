@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
-import { blockUserAction, unblockUserAction } from "@/app/actions/auth";
+import UserActionButton from "@/components/UserActionButton";
 
 export default async function UsersPage({
   searchParams,
@@ -11,7 +11,7 @@ export default async function UsersPage({
   const search = params.search || "";
   const status = params.status || "";
   const page = parseInt(params.page || "1", 10);
-  const itemsPerPage = 3;
+  const itemsPerPage = 10;
   const skip = (page - 1) * itemsPerPage;
 
   const where: any = {};
@@ -123,15 +123,7 @@ export default async function UsersPage({
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                   <Link href={`/admin/user-detail?id=${user.id}`} className="text-blue-600 hover:text-blue-900">Переглянути</Link>
-                  {user.status === "ACTIVE" ? (
-                    <form action={async () => { "use server"; await blockUserAction(user.id); }} className="inline">
-                      <button type="submit" className="text-red-600 hover:text-red-900 cursor-pointer bg-transparent border-none p-0">Заблокувати</button>
-                    </form>
-                  ) : (
-                    <form action={async () => { "use server"; await unblockUserAction(user.id); }} className="inline">
-                      <button type="submit" className="text-green-600 hover:text-green-900 cursor-pointer bg-transparent border-none p-0">Розблокувати</button>
-                    </form>
-                  )}
+                  <UserActionButton userId={user.id} userStatus={user.status} />
                 </td>
               </tr>
             ))}

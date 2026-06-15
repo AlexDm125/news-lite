@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { NewsFilters } from "@/components/NewsFilters";
 
-const ITEMS_PER_PAGE = 3;
+const ITEMS_PER_PAGE = 9;
 
 export default async function HomePage({
   searchParams,

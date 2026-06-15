@@ -1,36 +1,9 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
-import { blockUserAction, unblockUserAction, deleteCommentAction, updateCommentStatusAction } from "@/app/actions/auth";
-
-async function BlockUserButton({ userId, userStatus }: { userId: string; userStatus: string }) {
-  if (userStatus === "BLOCKED") {
-    return (
-      <form action={async () => { "use server"; await unblockUserAction(userId); }}>
-        <button type="submit" className="block w-full bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 font-medium">
-          Розблокувати користувача
-        </button>
-      </form>
-    );
-  }
-  return (
-    <form action={async () => { "use server"; await blockUserAction(userId); }}>
-      <button type="submit" className="block w-full bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 font-medium">
-        Заблокувати користувача
-      </button>
-    </form>
-  );
-}
-
-async function DeleteCommentButton({ commentId }: { commentId: string }) {
-  return (
-    <form action={async () => { "use server"; await deleteCommentAction(commentId); }}>
-      <button type="submit" className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm">
-        Видалити
-      </button>
-    </form>
-  );
-}
+import BlockUserButton from "@/components/BlockUserButton";
+import DeleteCommentButton from "@/components/DeleteCommentButton";
+import CommentModerationAction from "@/components/CommentModerationAction";
 
 export default async function AdminUserDetailPage({ 
   searchParams 
@@ -100,7 +73,7 @@ export default async function AdminUserDetailPage({
               </div>
             </div>
           </div>
-          <div className="text-right">
+          <div className="flex flex-col items-end gap-4">
             <span
               className={`inline-block text-xs font-medium px-4 py-2 rounded-full mb-4 ${
                 user.status === "ACTIVE"
@@ -157,21 +130,7 @@ export default async function AdminUserDetailPage({
                 </div>
                 <p className="text-gray-700 mb-3">{comment.content}</p>
                 <div className="flex space-x-2">
-                  {comment.status !== "ACTIVE" && (
-                    <form action={async () => { "use server"; await updateCommentStatusAction(comment.id, "ACTIVE"); }}>
-                      <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">
-                        Схвалити
-                      </button>
-                    </form>
-                  )}
-                  {comment.status !== "HIDDEN" && (
-                    <form action={async () => { "use server"; await updateCommentStatusAction(comment.id, "HIDDEN"); }}>
-                      <button type="submit" className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm">
-                        Приховати
-                      </button>
-                    </form>
-                  )}
-                  <DeleteCommentButton commentId={comment.id} />
+                  <CommentModerationAction commentId={comment.id} currentStatus={comment.status} />
                 </div>
               </div>
             ))}

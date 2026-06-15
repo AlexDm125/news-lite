@@ -105,49 +105,69 @@ export async function logoutAction() {
 }
 
 export async function blockUserAction(userId: string) {
-  await checkAdmin();
-  await checkNotBlocked();
-  await prisma.user.update({
-    where: { id: userId },
-    data: { status: "BLOCKED" },
-  });
-  revalidatePath("/admin/users");
-  return { success: true };
+  try {
+    await checkAdmin();
+    await checkNotBlocked();
+    await prisma.user.update({
+      where: { id: userId },
+      data: { status: "BLOCKED" },
+    });
+    revalidatePath("/admin/users");
+    return { success: true };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Помилка при блокуванні користувача";
+    return { error: message };
+  }
 }
 
 export async function unblockUserAction(userId: string) {
-  await checkAdmin();
-  await checkNotBlocked();
-  await prisma.user.update({
-    where: { id: userId },
-    data: { status: "ACTIVE" },
-  });
-  revalidatePath("/admin/users");
-  return { success: true };
+  try {
+    await checkAdmin();
+    await checkNotBlocked();
+    await prisma.user.update({
+      where: { id: userId },
+      data: { status: "ACTIVE" },
+    });
+    revalidatePath("/admin/users");
+    return { success: true };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Помилка при розблокуванні користувача";
+    return { error: message };
+  }
 }
 
 export async function updateCommentStatusAction(
   commentId: string,
   newStatus: "ACTIVE" | "HIDDEN" | "PENDING"
 ) {
-  await checkAdmin();
-  await checkNotBlocked();
-  await prisma.comment.update({
-    where: { id: commentId },
-    data: { status: newStatus },
-  });
-  revalidatePath("/admin/comments");
-  return { success: true };
+  try {
+    await checkAdmin();
+    await checkNotBlocked();
+    await prisma.comment.update({
+      where: { id: commentId },
+      data: { status: newStatus },
+    });
+    revalidatePath("/admin/comments");
+    return { success: true };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Помилка при оновленні статусу коментаря";
+    return { error: message };
+  }
 }
 
 export async function deleteCommentAction(commentId: string) {
-  await checkAdmin();
-  await checkNotBlocked();
-  await prisma.comment.delete({
-    where: { id: commentId },
-  });
-  revalidatePath("/admin/comments");
-  return { success: true };
+  try {
+    await checkAdmin();
+    await checkNotBlocked();
+    await prisma.comment.delete({
+      where: { id: commentId },
+    });
+    revalidatePath("/admin/comments");
+    return { success: true };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Помилка при видаленні коментаря";
+    return { error: message };
+  }
 }
 
 export async function updateUserProfile(data: {

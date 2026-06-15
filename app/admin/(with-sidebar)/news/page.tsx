@@ -12,7 +12,7 @@ export default async function AdminNewsPage({
   const categoryFilter = params.category || "";
   const searchQuery = params.search || "";
   const page = parseInt(params.page || "1", 10);
-  const itemsPerPage = 3;
+  const itemsPerPage = 10;
   const skip = (page - 1) * itemsPerPage;
 
   const where: any = {};

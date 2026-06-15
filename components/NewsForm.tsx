@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { createNewsAction, updateNewsAction } from "@/app/actions/news";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import ErrorDialog from "./ErrorDialog";
 
 const Editor = dynamic(() => import("./Editor"), { ssr: false });
 
@@ -22,6 +23,7 @@ export default function NewsForm({ categories, initialData }: NewsFormProps) {
   const [status, setStatus] = useState(initialData?.status || "DRAFT");
   const [content, setContent] = useState(initialData?.content || { blocks: [] });
   const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Визначаємо автора: або з існуючої статті, або з поточної сесії
   const authorName = initialData?.author?.name || session?.user?.name || session?.user?.email || "Адміністратор";
@@ -40,30 +42,46 @@ export default function NewsForm({ categories, initialData }: NewsFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsPending(true);
+    setError(null);
 
     const formData = new FormData();
     formData.append("title", title);
-    formData.append("slug", slug || "post-" + Date.now()); // Fallback якщо slug порожній
+    formData.append("slug", slug || "post-" + Date.now());
     formData.append("categoryId", categoryId);
     formData.append("status", status);
     formData.append("content", JSON.stringify(content));
 
     try {
+      let result;
       if (initialData?.id) {
-        await updateNewsAction(initialData.id, formData);
+        result = await updateNewsAction(initialData.id, formData);
       } else {
-        await createNewsAction(formData);
+        result = await createNewsAction(formData);
       }
-      router.push('/admin/news');
+      
+      if (result.error) {
+        setError(result.error);
+        setIsPending(false);
+      } else {
+        router.push('/admin/news');
+      }
     } catch (err) {
       console.error(err);
-      alert("Сталася помилка при збереженні.");
+      setError("Помилка при збереженні.");
       setIsPending(false);
     }
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-8">
+    <>
+      <ErrorDialog
+        isOpen={!!error}
+        title="Помилка при збереженні"
+        message={error || ""}
+        onClose={() => setError(null)}
+      />
+
+      <div className="bg-white rounded-lg shadow-md p-8">
       <form onSubmit={handleSubmit}>
         {/* Заголовок */}
         <div className="mb-6">
@@ -148,5 +166,6 @@ export default function NewsForm({ categories, initialData }: NewsFormProps) {
         </div>
       </form>
     </div>
+    </>
   );
 }

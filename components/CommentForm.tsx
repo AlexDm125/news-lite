@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from "react";
 import { addCommentAction } from "@/app/actions/news";
+import ErrorDialog from "./ErrorDialog";
 
 interface CommentFormProps {
   newsId: string;
@@ -31,7 +32,10 @@ export default function CommentForm({ newsId, newsSlug }: CommentFormProps) {
 
       const result = await addCommentAction(newsId, content);
 
-      if (result.success) {
+      if (result.error) {
+        setError(result.error);
+        setIsLoading(false);
+      } else if (result.success) {
         setSuccess(true);
         setContent("");
         setTimeout(() => {
@@ -49,18 +53,20 @@ export default function CommentForm({ newsId, newsSlug }: CommentFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      {error && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-          {error}
-        </div>
-      )}
-
-      {success && (
-        <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
-          ✓ Коментар додано! Він буде видимий після модерації адміністратором.
-        </div>
-      )}
+    <>
+      <ErrorDialog
+        isOpen={!!error}
+        title="Помилка"
+        message={error || ""}
+        onClose={() => setError(null)}
+      />
+      
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {success && (
+          <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
+            ✓ Коментар додано! Він буде видимий після модерації адміністратором.
+          </div>
+        )}
 
       <div>
         <textarea
@@ -91,5 +97,6 @@ export default function CommentForm({ newsId, newsSlug }: CommentFormProps) {
         💬 Коментар буде видний іншим користувачам після перевірки адміністратором.
       </p>
     </form>
+    </>
   );
 }

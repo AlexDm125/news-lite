@@ -19,11 +19,13 @@ export function LoginForm() {
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
+    const remember = formData.get("remember") === "on";
 
     try {
       const result = await signIn("credentials", {
         email,
         password,
+        remember: remember ? "true" : "false",
         redirect: false,
       });
 

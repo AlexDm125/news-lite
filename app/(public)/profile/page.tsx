@@ -2,17 +2,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
-import { deleteUserCommentAction } from "@/app/actions/news";
-
-async function DeleteCommentButton({ commentId }: { commentId: string }) {
-  return (
-    <form action={async () => { "use server"; await deleteUserCommentAction(commentId); }}>
-      <button type="submit" className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm">
-        Видалити
-      </button>
-    </form>
-  );
-}
+import DeleteProfileCommentButton from "@/components/DeleteProfileCommentButton";
 
 export default async function ProfilePage({
   searchParams,
@@ -21,7 +11,7 @@ export default async function ProfilePage({
 }) {
   const params = await searchParams;
   const page = parseInt(params.page || "1", 10);
-  const itemsPerPage = 3;
+  const itemsPerPage = 10;
   const skip = (page - 1) * itemsPerPage;
 
   const session = await auth();
@@ -157,7 +147,7 @@ export default async function ProfilePage({
                             ? "На модерації"
                             : "Приховано"}
                         </span>
-                        <DeleteCommentButton commentId={comment.id} />
+                        <DeleteProfileCommentButton commentId={comment.id} />
                       </div>
                     </div>
                   ))}

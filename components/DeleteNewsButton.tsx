@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { deleteNewsAction } from "@/app/actions/news";
 import ConfirmDialog from "./ConfirmDialog";
+import ErrorDialog from "./ErrorDialog";
 
 interface DeleteNewsButtonProps {
   id: string;
@@ -11,16 +12,17 @@ interface DeleteNewsButtonProps {
 export default function DeleteNewsButton({ id }: DeleteNewsButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleDelete = async () => {
     setIsLoading(true);
-    try {
-      await deleteNewsAction(id);
+    const result = await deleteNewsAction(id);
+    if (result.error) {
+      setError(result.error);
       setIsOpen(false);
-    } catch (error) {
-      console.error(error);
-      alert("Сталася помилка при видаленні новини.");
       setIsLoading(false);
+    } else {
+      setIsOpen(false);
     }
   };
 
@@ -33,10 +35,17 @@ export default function DeleteNewsButton({ id }: DeleteNewsButtonProps) {
         Видалити
       </button>
 
+      <ErrorDialog
+        isOpen={!!error}
+        title="Помилка"
+        message={error || ""}
+        onClose={() => setError(null)}
+      />
+
       <ConfirmDialog
         isOpen={isOpen}
         title="Видалити новину?"
-        message="Ця дія необоротна. Новина буде видалена назавжди."
+        message="Ця дія незворотна. Новина буде видалена назавжди."
         onConfirm={handleDelete}
         onCancel={() => setIsOpen(false)}
         isLoading={isLoading}
